@@ -1,0 +1,103 @@
+--------------------------------------------------------------------------------------------------------------------------------------
+
+CACHE OBJECT SPECIFICATION DOCUMENT
+
+	written by: Ian Sutton, 14/03/2014
+
+	last updated: 14/03/2014
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+ENUMS:
+
+	RType:
+
+	this enum contains the three possible replacement types:
+
+		LRU
+			Least Recently Used
+		FIFO
+			First In First Out
+		RAND
+			Random
+
+	WResult:
+
+	this enum contains the four possible results of a write:
+
+		HIT
+			indicates the write was a hit
+		COMPULSORY 
+			indicates a compulsory miss
+		CAPACITY
+			indicates a capacity miss
+		CONFLICT
+			indicates a conflict miss
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+CACHE object specification
+
+	takes in:
+
+	Rtype type
+		type is an enum representing the three replacement types, Least Recently Used (LRU), First In First Out (FIFO), and Random (RAND)
+	short numSets
+		numSets is a short that represents the associativity, or number of sets of the cache.
+	short numBlocks
+		numBlocks is a short that determines the size of the cache in terms of the number of blocks that it has.
+
+	----------------------------------------------------------------------------------------------------------------------------------
+
+	a call creating the cache object should looks something like this:
+
+		Cache myCache = new Cache(RType.LRU, 8, 128);
+
+	this call creates a cache object called myCache which uses the Least Recently Used replacement policy, is 8 way associative, and has 128 blocks of space total.
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+ADDRESS object specification
+
+	short tag
+		contains the tag part of the Address
+	short set
+		determines which set the Address belongs to
+
+	----------------------------------------------------------------------------------------------------------------------------------
+
+	a call to create an address object for use in the previous example's Cache might look like this:
+
+		Address myAddress = new Address(16, 0);
+
+	this represents a block with the tag 16 in the first set in the cache. Note that each set of the cache created above would have 16 blocks in it.
+
+	to add this address to the cache you might write:
+
+		myCache.write(myAddress);
+
+	but in order to track whether the addition was a hit or a miss, you might want to combine this with a switch statement:
+
+	switch (myCache.write(myAddress)) {
+		case WResult.HIT:
+			hit++; // update integer counter for cache hits
+			break();
+		case WResult.COMPULSORY:
+			compulsory++; // update integer counter for compulsory misses
+			break();
+		case WResult.CAPACITY:
+			compulsory++; // update integer counter for capacity misses
+			break();
+		case WResult.CONFLICT:
+			compulsory++; // update integer counter for comnflict misses
+			break();
+		default:
+			unknown++;
+			break();
+	}
+
+--------------------------------------------------------------------------------------------------------------------------------------
+

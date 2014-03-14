@@ -1,11 +1,9 @@
 class Address {
 	public short tag;
 	public short set;
-	public short offset;
 
-	public Address(short t, short s, short o) {
+	public Address(short t, short s) {
 		tag = t;
-		set = s;
-		offset = o;
+		set = s;=
 	}
 }
