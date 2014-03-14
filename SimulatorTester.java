@@ -1,4 +1,4 @@
-// Copyright 2013 Ji Hwan Park, Daniel Savage, and Ian Sutton
+// Copyright 2013 James Ji Hwan Park, Daniel Savage, and Ian Sutton
 
 import java.util.*;
 import java.io.*;
