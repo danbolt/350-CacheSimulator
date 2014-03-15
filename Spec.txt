@@ -89,13 +89,13 @@ ADDRESS object specification
 			compulsory++; // update integer counter for compulsory misses
 			break();
 		case WResult.CAPACITY:
-			compulsory++; // update integer counter for capacity misses
+			capacity++; // update integer counter for capacity misses
 			break();
 		case WResult.CONFLICT:
-			compulsory++; // update integer counter for comnflict misses
+			conflict++; // update integer counter for comnflict misses
 			break();
 		default:
-			unknown++;
+			unknown++; // this shouldn't happen
 			break();
 	}
 
