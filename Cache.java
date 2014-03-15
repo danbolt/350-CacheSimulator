@@ -1,10 +1,10 @@
-import java.util.Random;
+import java.util.*;
 
-public enum RType {
+enum RType {
     LRU, FIFO, RAND
 }
 
-public enum WResult {
+enum WResult {
 	HIT, COMPULSORY, CAPACITY, CONFLICT
 }
 
@@ -19,27 +19,24 @@ class Cache {
     	public Block[] blocks; // the array of blocks
     	public short count; // the number of blocks in the set that are in use
     	public short size; // the number of blocks the set has total
-        public Vector order; // a Vector used to implement the replacement policies
-        public Hashmap history; // a history of the values placed in the set
+        public Vector<Short> order; // a Vector used to implement the replacement policies
+        public HashMap<Short, Boolean> history; // a history of the values placed in the set
 
     	private class Block {
     		public short value;
 
-    		public Block(val) {
+    		public Block(short val) {
     			value = val;
     		}
 
-    		public Block() {
-    			value = null;
-    		}
     	} // block
 
     	public Set(short blocksize) {
     		size = blocksize;
     		count = 0;
     		blocks = new Block[blocksize];
-    		order = new Vector[(int)blocksize];
-            history = new HashMap(short, boolean);
+    		order = new Vector<Short>((int)blocksize);
+            history = new HashMap<Short, Boolean>();
     	} // Set constructor
 
         /*  write():
@@ -52,9 +49,12 @@ class Cache {
 
             // check for tag within set
             for (int i = 0; i < size; i++) {
-                if (blocks[i].value = tag) {
-                    if (type == Rtype.LRU)
-                        order.add(order.remove(Short(tag)));
+                if (blocks[i].value == tag) {
+                    if (type == RType.LRU) {
+                        Short temp = new Short(tag);
+                        order.remove(temp);
+                        order.add(temp);
+                    }
                     return WResult.HIT;
                 }
             }
@@ -62,22 +62,22 @@ class Cache {
             // tag is not within set: determine type of miss
 
             // determine if it is a conflict miss
-            if (history.containsKey(tag)) {
+            if (history.containsKey(new Short(tag))) {
                 replace(tag);
                 return WResult.CONFLICT;
             }
 
             // if it is not a conflict miss and the set is full, it is a capacity miss
-            if (count = size) {
+            if (count == size) {
                 replace(tag);
                 return WResult.CAPACITY;
             }
 
             // tag is not within set, find empty block to replace
             for (int i = 0; i < size; i++) {
-                if (blocks[i] = null) {
-                    blocks[i].value = tag;
-                    order.add(Short(tag));
+                if (blocks[i] == null) {
+                    blocks[i] = new Block(tag);
+                    order.add(new Short(tag));
                 }
             }
     		
@@ -92,7 +92,7 @@ class Cache {
                 set's address history
         */
 
-        public void replace(Short tag) {
+        public void replace(short tag) {
             if (type != RType.RAND) { // if the type is FIFO or LRU
 
                 // pop the bottom element off of the order Vector
@@ -100,40 +100,40 @@ class Cache {
                 order.remove(temp);
 
                 // add the new value to the top of the order Vector
-                order.add(Short(tag));
+                order.add(new Short(tag));
 
                 // add the old value to the history
-                history.put(temp.shortValue(), true);
+                history.put(temp, new Boolean(true));
 
                 // replace the item in blocks with the new value
                 for (int i = 0; i<size; i++) {
-                    if (blocks[i].item == temp.shortValue())
-                        blocks[i].item = tag;
+                    if (blocks[i].value == temp.shortValue())
+                        blocks[i].value = tag;
                 }
 
             } else { // if the type is RAND
                 // select a random index
-                int random = (int)(Math.random() * (size+1);
+                int random = (int)(Math.random() * (size+1));
 
                 // take the item from the block at that index and put it in the history
-                history.put(blocks[random].item, true);
+                history.put(new Short(blocks[random].value), new Boolean(true));
 
                 // replace the old item with the new one
-                blocks[random].item = tag;
+                blocks[random].value = tag;
             }
         } // replace()
 
     } // Set
 
-    public Cache(RType t, short sets, short blocks) {
+    public Cache(RType t, short s, short b) {
     	type = t;
-    	numSets = sets;
-    	numBlocks = blocks;
-    	short blocksize = blocks/sets;
-    	sets = new Set[sets];
+    	numSets = s;
+    	numBlocks = b;
+    	short blocksize = (short)(b/s);
+    	sets = new Set[numSets];
 
-    	for (int i = 0; i<sets; i++)
-    		sets[i] = new Set[blocksize];
+    	for (int i = 0; i<numSets; i++)
+    		sets[i] = new Set(blocksize);
 
     } // Cache constructor
 
@@ -142,7 +142,7 @@ class Cache {
             writes a given address into the cache, returns a WResult to indicate the result
     */
     public WResult write(Address address) {
-    	return sets[set].write(address.tag);
+    	return sets[address.set].write(address.tag);
     } // write()
 
 } // cache
