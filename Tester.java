@@ -10,6 +10,7 @@ class Tester {
 		myAddress[4] = new Address(2,0);
 
 		for (int i = 0; i < 5; i++) {
+			System.out.println("ADDRESS:\nset: " + myAddress[i].set + "\ntag: " + myAddress[i].tag);
 			switch (myCache.write(myAddress[i])) {
 				case HIT:
 					System.out.println("HIT");
@@ -27,6 +28,7 @@ class Tester {
 					System.out.println("lolwut");
 					break;
 			} // switch
+			System.out.print("\n");
 		} // for
 	}
 }

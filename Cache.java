@@ -47,7 +47,8 @@ class Cache {
 
     	public WResult write(short tag) {
 
-            System.out.println("count: " + count + "\nsize: " + size);
+            //System.out.println("count: " + count + "\nsize: " + size);
+            
             // check for tag within set
             for (int i = 0; i < size; i++) {
                 if (blocks[i] != null && blocks[i].value == tag) {
@@ -124,7 +125,7 @@ class Cache {
                 // replace the old item with the new one
                 blocks[random].value = tag;
             }
-            
+
         } // replace()
 
     } // Set
