@@ -47,9 +47,10 @@ class Cache {
 
     	public WResult write(short tag) {
 
+            System.out.println("count: " + count + "\nsize: " + size);
             // check for tag within set
             for (int i = 0; i < size; i++) {
-                if (blocks[i].value == tag) {
+                if (blocks[i] != null && blocks[i].value == tag) {
                     if (type == RType.LRU) {
                         Short temp = new Short(tag);
                         order.remove(temp);
@@ -78,10 +79,12 @@ class Cache {
                 if (blocks[i] == null) {
                     blocks[i] = new Block(tag);
                     order.add(new Short(tag));
+                    count++;
+                    return WResult.COMPULSORY;
                 }
             }
     		
-            return WResult.COMPULSORY;
+            return null;
 
     	} // write()
 
@@ -121,6 +124,7 @@ class Cache {
                 // replace the old item with the new one
                 blocks[random].value = tag;
             }
+            
         } // replace()
 
     } // Set
@@ -134,6 +138,18 @@ class Cache {
 
     	for (int i = 0; i<numSets; i++)
     		sets[i] = new Set(blocksize);
+
+    } // Cache constructor
+
+    public Cache(RType t, int s, int b) {
+        type = t;
+        numSets = (short)s;
+        numBlocks = (short)b;
+        short blocksize = (short)(b/s);
+        sets = new Set[numSets];
+
+        for (int i = 0; i<numSets; i++)
+            sets[i] = new Set(blocksize);
 
     } // Cache constructor
 
@@ -154,5 +170,10 @@ class Address {
     public Address(short t, short s) {
         tag = t;
         set = s;
+    }
+
+    public Address(int t, int s) {
+        tag = (short)t;
+        set = (short)s;
     }
 }

@@ -82,21 +82,21 @@ ADDRESS object specification
 	but in order to track whether the addition was a hit or a miss, you might want to combine this with a switch statement:
 
 	switch (myCache.write(myAddress)) {
-		case WResult.HIT:
+		case HIT:
 			hit++; // update integer counter for cache hits
-			break();
-		case WResult.COMPULSORY:
+			break;
+		case COMPULSORY:
 			compulsory++; // update integer counter for compulsory misses
-			break();
-		case WResult.CAPACITY:
+			break;
+		case CAPACITY:
 			capacity++; // update integer counter for capacity misses
-			break();
-		case WResult.CONFLICT:
+			break;
+		case CONFLICT:
 			conflict++; // update integer counter for comnflict misses
-			break();
+			break;
 		default:
 			unknown++; // this shouldn't happen
-			break();
+			break;
 	}
 
 --------------------------------------------------------------------------------------------------------------------------------------
