@@ -14,6 +14,36 @@ public class SimulatorTester
 		RAND
 	}
 
+	private ReplacementPolicy intToPolicy(int policy)
+	{
+		switch (policy)
+		{
+			case 0:
+				return ReplacementPolicy.LRU;
+			case 1:
+				return ReplacementPolicy.FIFO;
+			case 2:
+				return ReplacementPolicy.RAND;
+			default:
+				return ReplacementPolicy.LRU;
+		}
+	}
+
+	private int policyToInt(ReplacementPolicy policy)
+	{
+		switch (policy)
+		{
+			case LRU:
+				return 0;
+			case FIFO:
+				return 1;
+			case RAND:
+				return 2;
+			default:
+				return 0;
+		}
+	}
+
 	private class SimulationResult
 	{
 		public ReplacementPolicy policy = ReplacementPolicy.LRU;
@@ -39,7 +69,7 @@ public class SimulatorTester
 
 		public String toString()
 		{
-			String s = new String("Simulation:\nPolicy: " + policy + "\nCompulsory Misses: " + compulsoryMisses + "\nCapacity Misses: " + capacityMisses + "\nConflictMisses: " + conflictMisses);
+			String s = new String("Simulation:\nPolicy: " + policy + "\nCompulsory Misses: " + compulsoryMisses + "\nCapacity Misses: " + capacityMisses + "\nConflictMisses: " + conflictMisses + "\n");
 
 			return s;
 		}
@@ -87,28 +117,45 @@ public class SimulatorTester
 
 		String[] items = outputLine.split(" ");
 
-		return new SimulationResult((policy == 0) ? ReplacementPolicy.LRU : ((policy == 1)? ReplacementPolicy.FIFO : ReplacementPolicy.RAND), Integer.parseInt(items[0]), Integer.parseInt(items[1]), Integer.parseInt(items[2]), Integer.parseInt(items[3]), Integer.parseInt(items[4]), associativity, size);
+		return new SimulationResult(intToPolicy(policy), Integer.parseInt(items[0]), Integer.parseInt(items[1]), Integer.parseInt(items[2]), Integer.parseInt(items[3]), Integer.parseInt(items[4]), associativity, size);
+	}
+
+	private void runSimulations(ReplacementPolicy policy, int numberOfTests, HashSet<SimulationResult> resultsHash)
+	{
+		if (resultsHash == null)
+		{
+			return;
+		}
+
+		for (int sizePower = 2; sizePower <= 8; sizePower++)
+		{
+			for (int associativity = 2; associativity <= sizePower; associativity++)
+			{
+				resultsHash.add(simulate(policyToInt(policy), (int)Math.pow(2, associativity), (int)Math.pow(2, sizePower), numberOfTests));
+			}
+		}
 	}
 
 	public static void main(String[] args)
 	{
 		SimulatorTester tester = new SimulatorTester();
 
-		int numberOfTests = 10000;
-
 		HashSet<SimulationResult> LRUResults = new HashSet<SimulationResult>();
-		
-		for (int sizePower = 2; sizePower <= 8; sizePower++)
-		{
-			for (int associativity = 2; associativity <= sizePower; associativity++)
-			{
-				LRUResults.add(tester.simulate(0, (int)Math.pow(2, associativity), (int)Math.pow(2, sizePower), numberOfTests));
-			}
-		}
+		tester.runSimulations(ReplacementPolicy.LRU, 100, LRUResults);
+		tester.runSimulations(ReplacementPolicy.LRU, 1000, LRUResults);
+		tester.runSimulations(ReplacementPolicy.LRU, 10000, LRUResults);
+		tester.runSimulations(ReplacementPolicy.LRU, 100000, LRUResults);
 
-		for (SimulationResult result : LRUResults)
-		{
-			System.out.println("Size:" + result.cacheSize + " Associativity:" + result.associativity + " Hits:" + result.hits + " Total:" + result.totalAccesses);
-		}
+		HashSet<SimulationResult> FIFOResults = new HashSet<SimulationResult>();
+		tester.runSimulations(ReplacementPolicy.FIFO, 100, FIFOResults);
+		tester.runSimulations(ReplacementPolicy.FIFO, 1000, FIFOResults);
+		tester.runSimulations(ReplacementPolicy.FIFO, 10000, FIFOResults);
+		tester.runSimulations(ReplacementPolicy.FIFO, 100000, FIFOResults);
+
+		HashSet<SimulationResult> RANDResults = new HashSet<SimulationResult>();
+		tester.runSimulations(ReplacementPolicy.RAND, 100, RANDResults);
+		tester.runSimulations(ReplacementPolicy.RAND, 1000, RANDResults);
+		tester.runSimulations(ReplacementPolicy.RAND, 10000, RANDResults);
+		tester.runSimulations(ReplacementPolicy.RAND, 100000, RANDResults);
 	}
 }
