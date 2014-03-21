@@ -3,6 +3,7 @@
 // All methods will be within the static context. This is to encourage functional purity.
 
 import java.util.*;
+import java.lang.Math.*;
 import java.io.*;
 import java.lang.ProcessBuilder;
 
@@ -90,8 +91,15 @@ public class SimulatorTester
 	{
 		SimulatorTester tester = new SimulatorTester();
 
-		SimulationResult result = tester.simulate(0, 4, 1024, 2048);
+		int numberOfTests = 10000;
+
+		HashSet<SimulationResult> LRUResults = new HashSet<SimulationResult>();
+
+		//SimulationResult result = tester.simulate(0, 4, 1024, 2048);
 		
-		//
+		for (int sizePower = 2; sizePower < 15; sizePower++)
+		{
+			LRUResults.add(tester.simulate(0, 4, (int)Math.pow(2, sizePower), numberOfTests));
+		}
 	}
 }
