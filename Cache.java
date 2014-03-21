@@ -117,7 +117,7 @@ class Cache {
 
             } else { // if the type is RAND
                 // select a random index
-                int random = (int)(Math.random() * (size+1));
+                int random = (int)(Math.random() * (size));
 
                 // take the item from the block at that index and put it in the history
                 history.put(new Short(blocks[random].value), new Boolean(true));
