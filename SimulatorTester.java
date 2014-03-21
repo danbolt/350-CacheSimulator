@@ -136,6 +136,44 @@ public class SimulatorTester
 		}
 	}
 
+	private void writeResultsToFile(String fileName, HashSet<SimulationResult> results)
+	{
+		BufferedWriter output = null;
+
+		try
+		{
+			FileWriter fstream = new FileWriter(fileName, true);
+			output = new BufferedWriter(fstream);
+
+			output.write("policy,associativity,size,hits,compulsoryMisses,capacityMisses,conflictMisses,totalAccesses\n");
+
+			for (SimulationResult result : results)
+			{
+				output.write(result.policy + "," + Integer.toString(result.associativity) + "," + Integer.toString(result.cacheSize) + "," + Integer.toString(result.hits) + "," + Integer.toString(result.compulsoryMisses) + "," + Integer.toString(result.capacityMisses) + "," + Integer.toString(result.conflictMisses) + "," + Integer.toString(result.totalAccesses) + "\n");
+			}
+
+			output.close();
+		}
+		catch (IOException e)
+		{
+			System.err.println(e.getMessage());
+		}
+		finally
+		{
+			try
+			{
+			if (output != null)
+			{
+				output.close();
+			}
+			}
+			catch (Exception e)
+			{
+				//
+			}
+		}
+	}
+
 	public static void main(String[] args)
 	{
 		SimulatorTester tester = new SimulatorTester();
@@ -157,5 +195,9 @@ public class SimulatorTester
 		tester.runSimulations(ReplacementPolicy.RAND, 1000, RANDResults);
 		tester.runSimulations(ReplacementPolicy.RAND, 10000, RANDResults);
 		tester.runSimulations(ReplacementPolicy.RAND, 100000, RANDResults);
+
+		tester.writeResultsToFile("LRU.csv", LRUResults);
+		tester.writeResultsToFile("FIFO.csv", FIFOResults);
+		tester.writeResultsToFile("RAND.csv", RANDResults);
 	}
 }
