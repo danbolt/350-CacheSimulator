@@ -1,7 +1,5 @@
 // Copyright 2013 James Ji Hwan Park, Daniel Savage, and Ian Sutton
 
-// All methods will be within the static context. This is to encourage functional purity.
-
 import java.util.*;
 import java.lang.Math.*;
 import java.io.*;
@@ -24,14 +22,19 @@ public class SimulatorTester
 		public int capacityMisses = 0;
 		public int conflictMisses = 0;
 		public int totalAccesses = 0;
+		public int associativity = 0;
+		public int cacheSize = 0;
 
-		public SimulationResult(ReplacementPolicy policy, int hits, int compulsoryMisses, int capacityMisses, int conflictMisses, int totalAccesses)
+		public SimulationResult(ReplacementPolicy policy, int hits, int compulsoryMisses, int capacityMisses, int conflictMisses, int totalAccesses, int associativity, int cacheSize)
 		{
 			this.policy = policy;
+			this.hits = hits;
 			this.compulsoryMisses = compulsoryMisses;
 			this.capacityMisses = capacityMisses;
 			this.conflictMisses = conflictMisses;
 			this.totalAccesses = totalAccesses;
+			this.associativity = associativity;
+			this.cacheSize = cacheSize;
 		}
 
 		public String toString()
@@ -84,7 +87,7 @@ public class SimulatorTester
 
 		String[] items = outputLine.split(" ");
 
-		return new SimulationResult((policy == 0) ? ReplacementPolicy.LRU : ((policy == 1)? ReplacementPolicy.FIFO : ReplacementPolicy.RAND), Integer.parseInt(items[0]), Integer.parseInt(items[1]), Integer.parseInt(items[2]), Integer.parseInt(items[3]), Integer.parseInt(items[4]));
+		return new SimulationResult((policy == 0) ? ReplacementPolicy.LRU : ((policy == 1)? ReplacementPolicy.FIFO : ReplacementPolicy.RAND), Integer.parseInt(items[0]), Integer.parseInt(items[1]), Integer.parseInt(items[2]), Integer.parseInt(items[3]), Integer.parseInt(items[4]), associativity, size);
 	}
 
 	public static void main(String[] args)
@@ -94,12 +97,18 @@ public class SimulatorTester
 		int numberOfTests = 10000;
 
 		HashSet<SimulationResult> LRUResults = new HashSet<SimulationResult>();
-
-		//SimulationResult result = tester.simulate(0, 4, 1024, 2048);
 		
-		for (int sizePower = 2; sizePower < 15; sizePower++)
+		for (int sizePower = 2; sizePower <= 8; sizePower++)
 		{
-			LRUResults.add(tester.simulate(0, 4, (int)Math.pow(2, sizePower), numberOfTests));
+			for (int associativity = 2; associativity <= sizePower; associativity++)
+			{
+				LRUResults.add(tester.simulate(0, (int)Math.pow(2, associativity), (int)Math.pow(2, sizePower), numberOfTests));
+			}
+		}
+
+		for (SimulationResult result : LRUResults)
+		{
+			System.out.println("Size:" + result.cacheSize + " Associativity:" + result.associativity + " Hits:" + result.hits + " Total:" + result.totalAccesses);
 		}
 	}
 }
