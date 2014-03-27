@@ -129,7 +129,7 @@ public class SimulatorTester
 
 		for (int sizePower = 2; sizePower <= 8; sizePower++)
 		{
-			for (int associativity = 2; associativity <= sizePower; associativity++)
+			for (int associativity = 0; associativity <= sizePower; associativity++)
 			{
 				resultsHash.add(simulate(policyToInt(policy), (int)Math.pow(2, associativity), (int)Math.pow(2, sizePower), numberOfTests));
 			}
@@ -180,21 +180,21 @@ public class SimulatorTester
 
 		HashSet<SimulationResult> LRUResults = new HashSet<SimulationResult>();
 		tester.runSimulations(ReplacementPolicy.LRU, 100, LRUResults);
+		tester.runSimulations(ReplacementPolicy.LRU, 500, LRUResults);
 		tester.runSimulations(ReplacementPolicy.LRU, 1000, LRUResults);
-		tester.runSimulations(ReplacementPolicy.LRU, 10000, LRUResults);
-		tester.runSimulations(ReplacementPolicy.LRU, 100000, LRUResults);
+		tester.runSimulations(ReplacementPolicy.LRU, 5000, LRUResults);
 
 		HashSet<SimulationResult> FIFOResults = new HashSet<SimulationResult>();
 		tester.runSimulations(ReplacementPolicy.FIFO, 100, FIFOResults);
+		tester.runSimulations(ReplacementPolicy.FIFO, 500, FIFOResults);
 		tester.runSimulations(ReplacementPolicy.FIFO, 1000, FIFOResults);
-		tester.runSimulations(ReplacementPolicy.FIFO, 10000, FIFOResults);
-		tester.runSimulations(ReplacementPolicy.FIFO, 100000, FIFOResults);
+		tester.runSimulations(ReplacementPolicy.FIFO, 5000, FIFOResults);
 
 		HashSet<SimulationResult> RANDResults = new HashSet<SimulationResult>();
 		tester.runSimulations(ReplacementPolicy.RAND, 100, RANDResults);
+		tester.runSimulations(ReplacementPolicy.RAND, 500, RANDResults);
 		tester.runSimulations(ReplacementPolicy.RAND, 1000, RANDResults);
-		tester.runSimulations(ReplacementPolicy.RAND, 10000, RANDResults);
-		tester.runSimulations(ReplacementPolicy.RAND, 100000, RANDResults);
+		tester.runSimulations(ReplacementPolicy.RAND, 5000, RANDResults);
 
 		tester.writeResultsToFile("LRU.csv", LRUResults);
 		tester.writeResultsToFile("FIFO.csv", FIFOResults);

@@ -1,15 +1,19 @@
 class Tester {
 	
 	public static void main(String[] args) {
-		Cache myCache = new Cache(RType.LRU, 8, 16);
-		Address[] myAddress = new Address[5];
+		Cache myCache = new Cache(RType.LRU, 1, 4);
+		Address[] myAddress = new Address[9];
 		myAddress[0] = new Address(1,0);
 		myAddress[1] = new Address(2,0);
-		myAddress[2] = new Address(1,0);
+		myAddress[2] = new Address(2,0);
 		myAddress[3] = new Address(3,0);
 		myAddress[4] = new Address(2,0);
+		myAddress[5] = new Address(3,0);
+		myAddress[6] = new Address(0,0);
+		myAddress[7] = new Address(2,0);
+		myAddress[8] = new Address(5,0);
 
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < myAddress.length; i++) {
 			System.out.println("ADDRESS:\nset: " + myAddress[i].set + "\ntag: " + myAddress[i].tag);
 			switch (myCache.write(myAddress[i])) {
 				case HIT:
