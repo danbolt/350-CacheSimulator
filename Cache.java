@@ -14,6 +14,7 @@ class Cache {
     private short numSets; // the number of sets/associativity
     private short numBlocks; // the number of memory blocks/size
     private Set[] sets; // this is the array of sets
+    private int tally;
 
     private class Set {
     	public Block[] blocks; // the array of blocks
@@ -72,7 +73,7 @@ class Cache {
             // if it is not a conflict miss and the set is full, it is a capacity miss
             if (count == size) {
                 replace(tag);
-                return WResult.CAPACITY;
+                return WResult.COMPULSORY;
             }
 
             // tag is not within set, find empty block to replace
@@ -148,6 +149,7 @@ class Cache {
         numBlocks = (short)b;
         short blocksize = (short)(b/s);
         sets = new Set[numSets];
+        tally = 0;
 
         for (int i = 0; i<numSets; i++)
             sets[i] = new Set(blocksize);
@@ -159,7 +161,16 @@ class Cache {
             writes a given address into the cache, returns a WResult to indicate the result
     */
     public WResult write(Address address) {
-    	return sets[address.set].write(address.tag);
+        WResult ret = sets[address.set].write(address.tag);
+
+        if (ret == WResult.CONFLICT) {
+            if (tally >= numBlocks*numSets) {
+                return WResult.CAPACITY;
+            }
+        }
+        tally++;
+
+        return ret;
     } // write()
 
 } // cache
