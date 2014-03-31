@@ -71,7 +71,7 @@ public class CacheSim {
 	}
 
 	public static Address generateAddress(short size, short sets) {
-		short si = (short)(Math.random() * (size*2));
+		short si = (short)(Math.random() * ((size*2)/sets));
 		short se = (short)(Math.random() * (sets));
 		return new Address(si,se);
 	}
