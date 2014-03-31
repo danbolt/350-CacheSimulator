@@ -11,10 +11,9 @@ enum WResult {
 class Cache {
 
     protected final RType type; // the replacement type used
-    private short numSets; // the number of sets/associativity
-    private short numBlocks; // the number of memory blocks/size
+    private short numBlocks; // the number of blocks
+    private short associativity; // the number of memory blocks/set
     private Set[] sets; // this is the array of sets
-    private int tally;
 
     private class Set {
     	public Block[] blocks; // the array of blocks
@@ -64,16 +63,16 @@ class Cache {
 
             // tag is not within set: determine type of miss
 
-            // determine if it is a conflict miss
+            // determine if it is a capacity miss
             if (history.containsKey(new Short(tag))) {
                 replace(tag);
-                return WResult.CONFLICT;
+                return WResult.CAPACITY;
             }
 
-            // if it is not a conflict miss and the set is full, it is a capacity miss
+            // if it is not a capacity miss and the set is full, it is a conflict miss
             if (count == size) {
                 replace(tag);
-                return WResult.COMPULSORY;
+                return WResult.CONFLICT;
             }
 
             // tag is not within set, find empty block to replace
@@ -82,6 +81,7 @@ class Cache {
                     blocks[i] = new Block(tag);
                     order.add(new Short(tag));
                     count++;
+                    history.put(new Short(tag), new Boolean(true));
                     return WResult.COMPULSORY;
                 }
             }
@@ -133,25 +133,24 @@ class Cache {
 
     public Cache(RType t, short s, short b) {
     	type = t;
-    	numSets = s;
+    	associativity = s;
     	numBlocks = b;
-    	short blocksize = (short)(b/s);
-    	sets = new Set[numSets];
+    	short blocksize = (short)(s);
+    	sets = new Set[numBlocks/associativity];
 
-    	for (int i = 0; i<numSets; i++)
+    	for (int i = 0; i<numBlocks/associativity; i++)
     		sets[i] = new Set(blocksize);
 
     } // Cache constructor
 
     public Cache(RType t, int s, int b) {
         type = t;
-        numSets = (short)s;
+        associativity = (short)s;
         numBlocks = (short)b;
-        short blocksize = (short)(b/s);
-        sets = new Set[numSets];
-        tally = 0;
+        short blocksize = (short)(s);
+        sets = new Set[numBlocks/associativity];
 
-        for (int i = 0; i<numSets; i++)
+        for (int i = 0; i<numBlocks/associativity; i++)
             sets[i] = new Set(blocksize);
 
     } // Cache constructor
@@ -163,12 +162,11 @@ class Cache {
     public WResult write(Address address) {
         WResult ret = sets[address.set].write(address.tag);
 
-        if (ret == WResult.CONFLICT) {
-            if (tally >= numBlocks*numSets) {
+        if (numBlocks == associativity) {
+            if (ret == WResult.CONFLICT) {
                 return WResult.CAPACITY;
             }
         }
-        tally++;
 
         return ret;
     } // write()

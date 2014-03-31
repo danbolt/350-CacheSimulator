@@ -179,21 +179,12 @@ public class SimulatorTester
 		SimulatorTester tester = new SimulatorTester();
 
 		HashSet<SimulationResult> LRUResults = new HashSet<SimulationResult>();
-		tester.runSimulations(ReplacementPolicy.LRU, 100, LRUResults);
-		tester.runSimulations(ReplacementPolicy.LRU, 500, LRUResults);
-		tester.runSimulations(ReplacementPolicy.LRU, 1000, LRUResults);
 		tester.runSimulations(ReplacementPolicy.LRU, 5000, LRUResults);
 
 		HashSet<SimulationResult> FIFOResults = new HashSet<SimulationResult>();
-		tester.runSimulations(ReplacementPolicy.FIFO, 100, FIFOResults);
-		tester.runSimulations(ReplacementPolicy.FIFO, 500, FIFOResults);
-		tester.runSimulations(ReplacementPolicy.FIFO, 1000, FIFOResults);
 		tester.runSimulations(ReplacementPolicy.FIFO, 5000, FIFOResults);
 
 		HashSet<SimulationResult> RANDResults = new HashSet<SimulationResult>();
-		tester.runSimulations(ReplacementPolicy.RAND, 100, RANDResults);
-		tester.runSimulations(ReplacementPolicy.RAND, 500, RANDResults);
-		tester.runSimulations(ReplacementPolicy.RAND, 1000, RANDResults);
 		tester.runSimulations(ReplacementPolicy.RAND, 5000, RANDResults);
 
 		tester.writeResultsToFile("LRU.csv", LRUResults);
